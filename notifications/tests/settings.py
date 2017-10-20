@@ -1,4 +1,8 @@
 import os
+from distutils.version import StrictVersion
+
+from django import get_version
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SECRET_KEY = 'secret_key'
 
@@ -54,13 +58,26 @@ TEMPLATES = [
 NOTIFICATIONS_USE_JSONFIELD = True
 
 
-# Need to skip migrations for now as migrations created with python2 break with python3
-# See https://code.djangoproject.com/ticket/23455
-class DisableMigrations(object):
-    def __contains__(self, item):
-        return True
+if StrictVersion(get_version()) <= StrictVersion('1.9.0'):
+    # Need to skip migrations for now as migrations created with python2 break with python3
+    # See https://code.djangoproject.com/ticket/23455
+    class DisableMigrations(object):
+        def __contains__(self, item):
+            return True
 
-    def __getitem__(self, item):
-        return "notmigrations"
+        def __getitem__(self, item):
+            return "notmigrations"
 
-MIGRATION_MODULES = DisableMigrations()
+    MIGRATION_MODULES = DisableMigrations()
+else:
+    MIGRATION_MODULES = {
+        'auth': None,
+        'contenttypes': None,
+        'default': None,
+        'sessions': None,
+
+        'core': None,
+        'profiles': None,
+        'snippets': None,
+        'scaffold_templates': None,
+    }
