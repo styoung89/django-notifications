@@ -12,7 +12,7 @@ CONFIG_DEFAULTS = {
 
 
 def get_config():
-    user_config = getattr(settings, 'DJANGO_NOTIFICATIONS_CONFIG', {})
+    user_config = settings.DJANGO_NOTIFICATIONS_CONFIG
 
     config = CONFIG_DEFAULTS.copy()
     config.update(user_config)
